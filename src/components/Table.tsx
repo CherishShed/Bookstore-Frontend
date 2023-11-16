@@ -8,6 +8,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { Edit, Visibility } from "@mui/icons-material";
 
 function MyTable() {
   const books = bookStore((store) => store.books);
@@ -39,6 +41,11 @@ function MyTable() {
               </TableCell>
               <TableCell align="left">{row.author}</TableCell>
               <TableCell align="left">{row.publishYear}</TableCell>
+              <TableCell className="flex gap-4 items-center">
+                <DeleteIcon className="text-red-500" fontSize="small" />
+                <Edit className="text-blue-500" fontSize="small" />
+                <Visibility className="text-green-500" fontSize="small" />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

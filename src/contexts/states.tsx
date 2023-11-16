@@ -1,21 +1,20 @@
 import { create } from "zustand";
 import { produce } from "immer";
-type bookType = {
-  _id: {
-    title: string | null;
-    author: string | null;
-    publishYear: number | null;
-  };
+type modalData = {
+  _id: string | null;
+  title: string | null;
+  author: string | null;
+  publishYear: number | null;
 };
 type modalType = {
   show: boolean;
-  status: bookType;
+  status: modalData;
   showModal: (status: string) => void;
   hideModal: () => void;
 };
 export const modalStore = create<modalType>()((set) => ({
   show: false,
-  status: { _id: { title: null, author: null, publishYear: null } },
+  status: { _id: null, title: null, author: null, publishYear: null },
   showModal: (status) =>
     set(
       produce((store) => {
@@ -31,20 +30,32 @@ export const modalStore = create<modalType>()((set) => ({
     ),
 }));
 
-type bookStoreType = {
-  books: bookType[];
-  addBook: (dataObj: bookType) => void;
+type storetype = {
+  books: modalData[];
+  addBook: (
+    _id: string,
+    title: string,
+    author: string,
+    publishYear: number
+  ) => void;
   removeBook: (id: string) => void;
+  setBooks: (books: modalData[]) => void;
 };
-export const myStore = create<bookStoreType>()((set) => ({
-  books: [{ _id: { title: null, author: null, publishYear: null } }],
-  addBook: (dataObj: bookType) =>
-    set((store: bookStoreType) => ({
-      books: [...store.books, dataObj],
+export const bookStore = create<storetype>()((set) => ({
+  books: [{ _id: null, title: null, author: null, publishYear: null }],
+  addBook: (_id, title, author, publishYear) =>
+    set((store: storetype) => ({
+      books: [...store.books, { _id, author, title, publishYear }],
     })),
-  removeBook: (id: string) => {
-    set((store: bookStoreType) => ({
-      books: store.books.filter((Book) => id !== Object.keys(Book)[0]),
-    }));
+  removeBook: (id) =>
+    set((store: storetype) => ({
+      books: store.books.filter((Book) => id !== Book._id),
+    })),
+  setBooks: (books) => {
+    set(
+      produce((store) => {
+        store.books = books;
+      })
+    );
   },
 }));

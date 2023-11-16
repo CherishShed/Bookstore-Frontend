@@ -1,10 +1,10 @@
 import Modal from "./components/Modal";
-import Table from "./components/Table";
+import MyTable from "./components/Table";
 
 function App() {
   return (
     <>
-      <Table></Table>
+      <MyTable></MyTable>
       <Modal></Modal>
     </>
   );

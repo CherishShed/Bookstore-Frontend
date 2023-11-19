@@ -37,4 +37,20 @@ export const bookController = {
       console.log(error);
     }
   },
+  addBook: async (data: {
+    title: string | null;
+    author: string | null;
+    publishYear: string | null;
+  }) => {
+    try {
+      const book = axios
+        .post(`http://localhost:8081/api/books`, data)
+        .then((response) => {
+          return response.data.data;
+        });
+      return book;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };

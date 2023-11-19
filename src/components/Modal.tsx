@@ -1,13 +1,25 @@
 import { Button, TextField } from "@mui/material";
-import { modalStore } from "../contexts/states";
+import {
+  bookStore,
+  modalData,
+  modalStore,
+  toastStore,
+} from "../contexts/states";
 import { useEffect, useState } from "react";
+import { bookController } from "../services/book.service";
 
 function Modal() {
   const showModal = modalStore((store) => store.show);
   const hideModal = modalStore((store) => store.hideModal);
   const modalData = modalStore((store) => store.status);
+  const setToastText = toastStore((store) => store.setToastText);
+  const addBooks = bookStore((store) => store.addBook);
   const modalAction = modalStore((store) => store.action);
-  const [modalState, setModalState] = useState(modalData);
+  const [modalState, setModalState] = useState({
+    title: modalData.title,
+    author: modalData.author,
+    publishYear: modalData.publishYear,
+  });
   useEffect(() => {
     setModalState(modalData);
   }, [modalData]);
@@ -22,6 +34,7 @@ function Modal() {
         <TextField
           variant="outlined"
           label="Title"
+          name="title"
           value={modalState.title}
           onChange={(e) =>
             setModalState({ ...modalState, title: e.target.value })
@@ -32,6 +45,7 @@ function Modal() {
         <TextField
           variant="outlined"
           label="Author"
+          name="author"
           value={modalState.author}
           fullWidth
           onChange={(e) =>
@@ -41,14 +55,14 @@ function Modal() {
         />
         <TextField
           variant="outlined"
-          type="number"
+          name="yearPublished"
           label="Year Published"
           value={modalState.publishYear}
           fullWidth
           onChange={(e) =>
             setModalState({
               ...modalState,
-              publishYear: parseInt(e.target.value),
+              publishYear: e.target.value,
             })
           }
           disabled={modalAction === "View" ? true : false}
@@ -57,7 +71,7 @@ function Modal() {
           <Button
             onClick={() => {
               hideModal();
-              setModalState({ _id: "", title: "", author: "", publishYear: 0 });
+              setModalState({ title: "", author: "", publishYear: "" });
             }}
             className="w-fit"
             variant="contained"
@@ -66,7 +80,31 @@ function Modal() {
             Close
           </Button>
           <Button
-            onClick={hideModal}
+            onClick={() => {
+              if (
+                modalState.author === "" ||
+                modalState.author === "" ||
+                modalState.publishYear === ""
+              ) {
+                setToastText("error", "Please Fill all details");
+              } else {
+                bookController
+                  .addBook(modalState)
+                  .then((book: modalData) => {
+                    addBooks(
+                      book._id!,
+                      book.title!,
+                      book.author!,
+                      book.publishYear!
+                    );
+                    setToastText("success", "Book Added Successfully");
+                    hideModal();
+                  })
+                  .catch((error) => {
+                    setToastText("error", error.message);
+                  });
+              }
+            }}
             className="w-fit"
             variant="contained"
             color="success"

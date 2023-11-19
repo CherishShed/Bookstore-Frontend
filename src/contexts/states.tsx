@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import { produce } from "immer";
-type modalData = {
+export type modalData = {
   _id: string | null;
   title: string | null;
   author: string | null;
-  publishYear: number | null;
+  publishYear: string | null;
 };
 type modalType = {
   show: boolean;
@@ -16,17 +16,27 @@ type modalType = {
 type toastType = {
   toastText: string | null;
   status: "success" | "error";
+  show: boolean;
   setToastText: (status: "success" | "error", text: string) => void;
+  closeToast: () => void;
 };
 
 export const toastStore = create<toastType>()((set) => ({
   toastText: null,
   status: "success",
+  show: true,
   setToastText: (status: string, text: string) =>
     set(
       produce((store) => {
         store.toastText = text;
         store.status = status;
+        store.show = true;
+      })
+    ),
+  closeToast: () =>
+    set(
+      produce((store) => {
+        store.show = false;
       })
     ),
 }));
@@ -62,7 +72,7 @@ type storetype = {
     _id: string,
     title: string,
     author: string,
-    publishYear: number
+    publishYear: string
   ) => void;
   removeBook: (id: string) => void;
   setBooks: (books: modalData[]) => void;

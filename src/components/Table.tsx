@@ -18,16 +18,15 @@ function MyTable() {
   const setToastText = toastStore((store) => store.setToastText);
   const books = bookStore((store) => store.books);
   const setBooks = bookStore((store) => store.setBooks);
+  const removeBook = bookStore((store) => store.removeBook);
   const showModal = modalStore((store) => store.showModal);
   useEffect(() => {
     bookController
       .getAllBooks()
       .then((books) => {
         setBooks(books);
-        setToastText("success", "Books Updated!");
       })
       .catch((err) => {
-        console.log(err);
         setToastText("error", err.message);
       });
     console.log(books);
@@ -74,20 +73,6 @@ function MyTable() {
                     className="gap-4 items-left justify-center h-full p-2 pt-4"
                     style={{ display: "flex" }}
                   >
-                    <DeleteIcon
-                      className="text-red-500 hover:text-black"
-                      fontSize="small"
-                      onClick={() => {
-                        bookController
-                          .deleteBook(row._id!)
-                          .then(() => {
-                            setToastText("success", "Book Deleted");
-                          })
-                          .catch((err) => {
-                            setToastText("error", err.message);
-                          });
-                      }}
-                    />
                     <Edit
                       className="text-blue-500 hover:text-black"
                       fontSize="small"
@@ -100,6 +85,26 @@ function MyTable() {
                     <Visibility
                       className="text-green-500 hover:text-black"
                       fontSize="small"
+                      onClick={() => {
+                        bookController.getSingleBook(row._id!).then((book) => {
+                          showModal(book, "View");
+                        });
+                      }}
+                    />
+                    <DeleteIcon
+                      className="text-red-500 hover:text-black"
+                      fontSize="small"
+                      onClick={() => {
+                        bookController
+                          .deleteBook(row._id!)
+                          .then(() => {
+                            removeBook(row._id!);
+                            setToastText("success", "Book Deleted");
+                          })
+                          .catch((err) => {
+                            setToastText("error", err.message);
+                          });
+                      }}
                     />
                   </TableCell>
                 </TableRow>

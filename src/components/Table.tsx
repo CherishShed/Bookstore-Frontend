@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { bookStore, toastStore } from "../contexts/states";
+import { bookStore, modalStore, toastStore } from "../contexts/states";
 import { bookController } from "../services/book.service";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -18,6 +18,7 @@ function MyTable() {
   const setToastText = toastStore((store) => store.setToastText);
   const books = bookStore((store) => store.books);
   const setBooks = bookStore((store) => store.setBooks);
+  const showModal = modalStore((store) => store.showModal);
   useEffect(() => {
     bookController
       .getAllBooks()
@@ -90,6 +91,11 @@ function MyTable() {
                     <Edit
                       className="text-blue-500 hover:text-black"
                       fontSize="small"
+                      onClick={() => {
+                        bookController.getSingleBook(row._id!).then((book) => {
+                          showModal(book, "Edit");
+                        });
+                      }}
                     />
                     <Visibility
                       className="text-green-500 hover:text-black"

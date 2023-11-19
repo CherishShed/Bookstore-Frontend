@@ -34,10 +34,7 @@ function App() {
         variant="outlined"
         color="success"
         onClick={() => {
-          showModal(
-            { _id: null, title: null, author: null, publishYear: null },
-            "Add"
-          );
+          showModal({ _id: "", title: "", author: "", publishYear: 0 }, "Add");
         }}
       >
         Add

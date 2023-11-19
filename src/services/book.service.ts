@@ -25,4 +25,16 @@ export const bookController = {
       console.log(error);
     }
   },
+  getSingleBook: async (id: string) => {
+    try {
+      const book = axios
+        .get(`http://localhost:8081/api/books/${id}`)
+        .then((response) => {
+          return response.data.data;
+        });
+      return book;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };

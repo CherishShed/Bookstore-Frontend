@@ -9,7 +9,7 @@ type modalData = {
 type modalType = {
   show: boolean;
   status: modalData;
-  action: "Add" | "Edit";
+  action: "Add" | "Edit" | "View";
   showModal: (status: modalData, action: string) => void;
   hideModal: () => void;
 };

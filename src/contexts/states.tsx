@@ -9,23 +9,49 @@ type modalData = {
 type modalType = {
   show: boolean;
   status: modalData;
-  showModal: (status: string) => void;
+  action: "Add" | "Edit";
+  showModal: (status: modalData, action: string) => void;
   hideModal: () => void;
 };
+type toastType = {
+  toastText: string | null;
+  status: "success" | "error";
+  setToastText: (status: "success" | "error", text: string) => void;
+};
+
+export const toastStore = create<toastType>()((set) => ({
+  toastText: null,
+  status: "success",
+  setToastText: (status: string, text: string) =>
+    set(
+      produce((store) => {
+        store.toastText = text;
+        store.status = status;
+      })
+    ),
+}));
 export const modalStore = create<modalType>()((set) => ({
   show: false,
+  action: "Add",
   status: { _id: null, title: null, author: null, publishYear: null },
-  showModal: (status) =>
+  showModal: (status, action) =>
     set(
       produce((store) => {
         store.show = true;
         store.status = status;
+        store.action = action;
       })
     ),
   hideModal: () =>
     set(
       produce((store) => {
         store.show = false;
+        store.status = {
+          _id: null,
+          title: null,
+          author: null,
+          publishYear: null,
+        };
       })
     ),
 }));
@@ -42,7 +68,7 @@ type storetype = {
   setBooks: (books: modalData[]) => void;
 };
 export const bookStore = create<storetype>()((set) => ({
-  books: [{ _id: null, title: null, author: null, publishYear: null }],
+  books: [],
   addBook: (_id, title, author, publishYear) =>
     set((store: storetype) => ({
       books: [...store.books, { _id, author, title, publishYear }],

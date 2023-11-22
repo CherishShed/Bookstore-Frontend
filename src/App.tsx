@@ -37,11 +37,12 @@ function App() {
       <MyTable></MyTable>
       <Modal></Modal>
       <Button
-        variant="outlined"
+        variant="contained"
         color="success"
         onClick={() => {
           showModal({ _id: "", title: "", author: "", publishYear: "" }, "Add");
         }}
+        fullWidth={true}
       >
         Add
       </Button>

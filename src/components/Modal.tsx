@@ -14,7 +14,9 @@ function Modal() {
   const modalData = modalStore((store) => store.status);
   const setToastText = toastStore((store) => store.setToastText);
   const addBooks = bookStore((store) => store.addBook);
+  const editBook = bookStore((store) => store.editBook);
   const modalAction = modalStore((store) => store.action);
+  const setModalAction = modalStore((store) => store.setAction);
   const [modalState, setModalState] = useState({
     title: modalData.title,
     author: modalData.author,
@@ -81,35 +83,50 @@ function Modal() {
           </Button>
           <Button
             onClick={() => {
-              if (
-                modalState.author === "" ||
-                modalState.author === "" ||
-                modalState.publishYear === ""
-              ) {
-                setToastText("error", "Please Fill all details");
-              } else {
+              if (modalAction === "Add") {
+                if (
+                  modalState.author === "" ||
+                  modalState.author === "" ||
+                  modalState.publishYear === ""
+                ) {
+                  setToastText("error", "Please Fill all details");
+                } else {
+                  bookController
+                    .addBook(modalState)
+                    .then((book: modalData) => {
+                      addBooks(
+                        book._id!,
+                        book.title!,
+                        book.author!,
+                        book.publishYear!
+                      );
+                      setToastText("success", "Book Added Successfully");
+                      hideModal();
+                    })
+                    .catch((error) => {
+                      setToastText("error", error.message);
+                    });
+                }
+              } else if (modalAction === "Edit") {
                 bookController
-                  .addBook(modalState)
-                  .then((book: modalData) => {
-                    addBooks(
-                      book._id!,
-                      book.title!,
-                      book.author!,
-                      book.publishYear!
-                    );
-                    setToastText("success", "Book Added Successfully");
+                  .editBook(modalData._id!, modalState)
+                  .then(() => {
+                    editBook(modalData!._id!, modalState);
+                    setToastText("success", "Book Edited Successfully");
                     hideModal();
                   })
                   .catch((error) => {
                     setToastText("error", error.message);
                   });
+              } else {
+                setModalAction("Edit");
               }
             }}
-            className="w-fit"
+            className={`w-fit`}
             variant="contained"
             color="success"
           >
-            Done
+            {modalAction !== "View" ? "Done" : "Edit"}
           </Button>
         </div>
       </div>

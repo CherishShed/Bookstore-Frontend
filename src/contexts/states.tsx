@@ -10,6 +10,7 @@ type modalType = {
   show: boolean;
   status: modalData;
   action: "Add" | "Edit" | "View";
+  setAction: (action: string) => void;
   showModal: (status: modalData, action: string) => void;
   hideModal: () => void;
 };
@@ -44,6 +45,13 @@ export const modalStore = create<modalType>()((set) => ({
   show: false,
   action: "Add",
   status: { _id: null, title: null, author: null, publishYear: null },
+  setAction: (action: string) => {
+    set(
+      produce((store) => {
+        store.action = action;
+      })
+    );
+  },
   showModal: (status, action) =>
     set(
       produce((store) => {
@@ -75,10 +83,31 @@ type storetype = {
     publishYear: string
   ) => void;
   removeBook: (id: string) => void;
+  editBook: (
+    id: string,
+    data: {
+      title: string | null;
+      author: string | null;
+      publishYear: string | null;
+    }
+  ) => void;
   setBooks: (books: modalData[]) => void;
 };
 export const bookStore = create<storetype>()((set) => ({
   books: [],
+  editBook: (id, data) =>
+    set(
+      produce((store: storetype) => {
+        store.books = store.books.map((book) => {
+          if (id === book._id) {
+            book.title = data.title;
+            book.author = data.author;
+            book.publishYear = data.publishYear;
+          }
+          return book;
+        });
+      })
+    ),
   addBook: (_id, title, author, publishYear) =>
     set((store: storetype) => ({
       books: [...store.books, { _id, author, title, publishYear }],
@@ -87,6 +116,7 @@ export const bookStore = create<storetype>()((set) => ({
     set((store: storetype) => ({
       books: store.books.filter((Book) => id !== Book._id),
     })),
+
   setBooks: (books) => {
     set(
       produce((store) => {

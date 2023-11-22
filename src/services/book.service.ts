@@ -53,4 +53,23 @@ export const bookController = {
       console.log(error);
     }
   },
+  editBook: async (
+    id: string,
+    data: {
+      title: string | null;
+      author: string | null;
+      publishYear: string | null;
+    }
+  ) => {
+    try {
+      const book = axios
+        .put(`http://localhost:8081/api/books/${id}`, data)
+        .then((response) => {
+          return response.data.data;
+        });
+      return book;
+    } catch (error) {
+      console.log(error);
+    }
+  },
 };
